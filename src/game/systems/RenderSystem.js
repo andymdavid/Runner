@@ -2,9 +2,15 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../../constants';
 
 export const RenderSystem = {
   ctx: null,
+  cameraX: 0,
 
   init(canvasContext) {
     this.ctx = canvasContext;
+    this.cameraX = 0;
+  },
+
+  setCameraX(x) {
+    this.cameraX = x;
   },
 
   clear() {
@@ -14,13 +20,13 @@ export const RenderSystem = {
 
   drawRect(x, y, width, height, color) {
     this.ctx.fillStyle = color;
-    this.ctx.fillRect(x, y, width, height);
+    this.ctx.fillRect(x - this.cameraX, y, width, height);
   },
 
   drawCircle(x, y, radius, color) {
     this.ctx.fillStyle = color;
     this.ctx.beginPath();
-    this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+    this.ctx.arc(x - this.cameraX, y, radius, 0, Math.PI * 2);
     this.ctx.fill();
   }
 };

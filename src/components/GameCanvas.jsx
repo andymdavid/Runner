@@ -1,5 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { GameLoop } from '../game/core/GameLoop';
+import { InputSystem } from '../game/systems/InputSystem';
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants';
 
 export function GameCanvas() {
   const canvasRef = useRef(null);
@@ -18,14 +20,15 @@ export function GameCanvas() {
     // Cleanup function
     return () => {
       gameLoop.stop();
+      InputSystem.cleanup();
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      width={800}
-      height={600}
+      width={CANVAS_WIDTH}
+      height={CANVAS_HEIGHT}
       style={{ border: '1px solid #333' }}
     />
   );

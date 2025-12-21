@@ -1,18 +1,16 @@
-import { GRAVITY, GROUND_Y } from '../../constants';
+import { GRAVITY } from '../../constants';
 
 export const PhysicsSystem = {
   update(player, deltaTime) {
+    const clampedDelta = Math.min(deltaTime, 100);
+    const timeScale = clampedDelta / 16;
+
     // Apply gravity
-    player.velocity.y += GRAVITY * (deltaTime / 16);
+    player.velocity.y += GRAVITY * timeScale;
 
     // Update position based on velocity
-    player.position.x += player.velocity.x * (deltaTime / 16);
-    player.position.y += player.velocity.y * (deltaTime / 16);
+    player.position.x += player.velocity.x * timeScale;
+    player.position.y += player.velocity.y * timeScale;
 
-    // Simple ground collision (temporary)
-    if (player.position.y >= GROUND_Y) {
-      player.position.y = GROUND_Y;
-      player.velocity.y = 0;
-    }
   }
 };
