@@ -9,6 +9,7 @@ export const TerrainSystem = {
   tunnels: [],
   ceilingOffsets: [],
   recesses: [],
+  floorOffsets: [],
   thickness: 120,
   baseClearance: 220,
   minClearance: 0,
@@ -20,6 +21,7 @@ export const TerrainSystem = {
     this.tunnels = [];
     this.ceilingOffsets = [];
     this.recesses = [];
+    this.floorOffsets = [];
     this.ceilingDrop = 0;
   },
 
@@ -43,6 +45,9 @@ export const TerrainSystem = {
     }
     if (Array.isArray(chunk.recesses)) {
       this.recesses.push(...chunk.recesses);
+    }
+    if (Array.isArray(chunk.floorOffsets)) {
+      this.floorOffsets.push(...chunk.floorOffsets);
     }
   },
 
@@ -99,6 +104,7 @@ export const TerrainSystem = {
     this.tunnels = this.tunnels.filter((zone) => zone.endX >= cutoff);
     this.recesses = this.recesses.filter((zone) => zone.endX >= cutoff);
     this.ceilingOffsets = this.ceilingOffsets.filter((point) => point.x >= cutoff);
+    this.floorOffsets = this.floorOffsets.filter((zone) => zone.endX >= cutoff);
 
     if (this.regions.length === 0) {
       this.regions = [{ points: [{ x: cutoff, y: GROUND_Y }] }];
@@ -106,6 +112,8 @@ export const TerrainSystem = {
   },
 
   getSurfaceY(x) {
+    const floorOffset = this._getFloorOffset(x);
+
     for (const region of this.regions) {
       const { points } = region;
       if (points.length < 2) continue;
@@ -118,12 +126,23 @@ export const TerrainSystem = {
         const p2 = points[i + 1];
         if (x >= p1.x && x <= p2.x) {
           const t = (x - p1.x) / (p2.x - p1.x || 1);
-          return p1.y + (p2.y - p1.y) * t;
+          const baseY = p1.y + (p2.y - p1.y) * t;
+          return baseY + floorOffset;
         }
       }
     }
 
     return Infinity;
+  },
+
+  _getFloorOffset(x) {
+    let offset = 0;
+    for (const zone of this.floorOffsets) {
+      if (x >= zone.startX && x <= zone.endX) {
+        offset = Math.max(offset, zone.offset || 0);
+      }
+    }
+    return offset;
   },
 
   getClearance(x) {
@@ -148,6 +167,11 @@ export const TerrainSystem = {
       if (x >= point.x && x <= point.x + 40) {
         clearance = Math.max(clearance, point.offset);
       }
+    }
+
+    const floorOffset = this._getFloorOffset(x);
+    if (floorOffset) {
+      clearance += floorOffset;
     }
 
     const maxDrop = this._getMaxCollapseDrop();

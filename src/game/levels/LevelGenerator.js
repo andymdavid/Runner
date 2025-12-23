@@ -79,12 +79,13 @@ export const LevelGenerator = {
       overhangs.push({
         startX: crevasse1StartX,
         endX: crevasse1EndX,
-        clearance: 160, // Reduced from base 220 to create hanging obstacle
+        clearance: 140, // 80px drop from base 220 clearance
       });
     }
 
     // Add ceiling recesses (inverse cutouts)
     const recesses = [];
+    const floorOffsets = [];
 
     // Rectangular ceiling recess at X:2400 (60px wide, ceiling pulls back 60px)
     const recess1StartX = 2400;
@@ -93,7 +94,18 @@ export const LevelGenerator = {
       recesses.push({
         startX: recess1StartX,
         endX: recess1EndX,
-        clearance: 280, // Increased from base 220 to create ceiling alcove
+        clearance: 300, // 80px taller than base 220 clearance
+      });
+    }
+
+    // Floor recess matching the ceiling-recess style (but cutting downward)
+    const floorRecessStartX = 2200;
+    const floorRecessEndX = floorRecessStartX + 60;
+    if (startX <= floorRecessEndX && chunkEnd >= floorRecessStartX) {
+      floorOffsets.push({
+        startX: floorRecessStartX,
+        endX: floorRecessEndX,
+        offset: 25, // Drop floor by 25px within this span
       });
     }
 
@@ -102,6 +114,7 @@ export const LevelGenerator = {
       overhangs,
       tunnels: [],
       recesses,
+      floorOffsets,
       ceilingPoints: [],
       endPoint: { x: chunkEnd, y: endY },
       endX: chunkEnd,
