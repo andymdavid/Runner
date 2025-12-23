@@ -84,4 +84,8 @@ export const CeilingSystem = {
     this.currentPhase = phase;
     this.phaseTimer = 0;
   },
+
+  isCeilingLow() {
+    return this.currentPhase === PHASE.DESCENDING || this.currentPhase === PHASE.HOLD;
+  },
 };

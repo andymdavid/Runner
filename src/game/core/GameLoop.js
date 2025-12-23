@@ -40,6 +40,7 @@ export class GameLoop {
     this.ceiling = new Ceiling();
     this.showCrushMessage = false;
     this.crushMessageTimer = 0;
+    this.isPausedByCeiling = false;
 
     this.debugCameraX = 0;
     this.debugCameraPanSpeed = 10;
@@ -111,34 +112,45 @@ export class GameLoop {
       }
     } else {
       // Normal gameplay mode
+      const wasCeilingPaused = this.isPausedByCeiling;
       const speedModifier = InputSystem.getSpeedModifier();
-      this.player.velocity.x = this.player.baseSpeed * speedModifier;
+      const intendedSpeed = this.player.baseSpeed * speedModifier;
+      this.player.velocity.x = wasCeilingPaused ? 0 : intendedSpeed;
+      if (wasCeilingPaused) {
+        this.player.velocity.y = 0;
+      }
       this.player.previousPosition = { ...this.player.position };
-      AnimationController.update(this.player, deltaTime);
+      const animationDelta = wasCeilingPaused ? 0 : deltaTime;
+      AnimationController.update(this.player, animationDelta);
 
-      // Update physics
-      PhysicsSystem.update(this.player, deltaTime);
+      if (!wasCeilingPaused) {
+        PhysicsSystem.update(this.player, deltaTime);
+      }
 
       CollisionSystem.resolveTerrainCollision(this.player);
 
-      if (this.player.position.y > CANVAS_HEIGHT + 100) {
-        GameState.loseLife();
-        this.player.reset();
-        this.snapPlayerToTerrain();
-      }
+      if (!wasCeilingPaused) {
+        if (this.player.position.y > CANVAS_HEIGHT + 100) {
+          GameState.loseLife();
+          this.player.reset();
+          this.snapPlayerToTerrain();
+        }
 
-      GameState.updateDistance(this.player.position.x);
+        GameState.updateDistance(this.player.position.x);
+      }
 
       CeilingSystem.update(this.ceiling, deltaTime, TerrainSystem);
 
-      if (this.player.position.x + CANVAS_WIDTH > this.nextChunkX) {
-        this.generateNextChunk();
-      }
+      if (!wasCeilingPaused) {
+        if (this.player.position.x + CANVAS_WIDTH > this.nextChunkX) {
+          this.generateNextChunk();
+        }
 
-      // Prune terrain well outside the visible area (2 screens behind camera)
-      const prunePosition = RenderSystem.cameraX - CANVAS_WIDTH * 2;
-      if (prunePosition > 0) {
-        TerrainSystem.prune(prunePosition);
+        // Prune terrain well outside the visible area (2 screens behind camera)
+        const prunePosition = RenderSystem.cameraX - CANVAS_WIDTH * 2;
+        if (prunePosition > 0) {
+          TerrainSystem.prune(prunePosition);
+        }
       }
 
       if (CollisionSystem.checkCeilingCollision(this.player)) {
@@ -147,6 +159,11 @@ export class GameLoop {
         this.snapPlayerToTerrain();
         this.showCrushMessage = true;
         this.crushMessageTimer = 1000;
+        this.isPausedByCeiling = false;
+      } else {
+        const clearance = CollisionSystem.getVerticalClearance(this.player);
+        const ceilingLow = CeilingSystem.isCeilingLow();
+        this.isPausedByCeiling = ceilingLow && clearance > this.player.height;
       }
 
       if (this.showCrushMessage) {
@@ -156,8 +173,10 @@ export class GameLoop {
         }
       }
 
-      const targetCameraX = this.player.position.x - CANVAS_WIDTH / 2;
-      RenderSystem.setCameraX(targetCameraX);
+      if (!wasCeilingPaused) {
+        const targetCameraX = this.player.position.x - CANVAS_WIDTH / 2;
+        RenderSystem.setCameraX(targetCameraX);
+      }
     }
   }
 
