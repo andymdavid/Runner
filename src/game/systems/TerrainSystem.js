@@ -8,6 +8,7 @@ export const TerrainSystem = {
   overhangs: [],
   tunnels: [],
   ceilingOffsets: [],
+  recesses: [],
   thickness: 120,
   baseClearance: 220,
   minClearance: 0,
@@ -18,6 +19,7 @@ export const TerrainSystem = {
     this.overhangs = [];
     this.tunnels = [];
     this.ceilingOffsets = [];
+    this.recesses = [];
     this.ceilingDrop = 0;
   },
 
@@ -38,6 +40,9 @@ export const TerrainSystem = {
     }
     if (Array.isArray(chunk.ceilingPoints)) {
       this.ceilingOffsets.push(...chunk.ceilingPoints);
+    }
+    if (Array.isArray(chunk.recesses)) {
+      this.recesses.push(...chunk.recesses);
     }
   },
 
@@ -92,6 +97,7 @@ export const TerrainSystem = {
 
     this.overhangs = this.overhangs.filter((zone) => zone.endX >= cutoff);
     this.tunnels = this.tunnels.filter((zone) => zone.endX >= cutoff);
+    this.recesses = this.recesses.filter((zone) => zone.endX >= cutoff);
     this.ceilingOffsets = this.ceilingOffsets.filter((point) => point.x >= cutoff);
 
     if (this.regions.length === 0) {
@@ -130,6 +136,11 @@ export const TerrainSystem = {
     for (const tunnel of this.tunnels) {
       if (x >= tunnel.startX && x <= tunnel.endX) {
         clearance = Math.min(clearance, tunnel.clearance);
+      }
+    }
+    for (const recess of this.recesses) {
+      if (x >= recess.startX && x <= recess.endX) {
+        clearance = Math.max(clearance, recess.clearance);
       }
     }
     for (const point of this.ceilingOffsets) {

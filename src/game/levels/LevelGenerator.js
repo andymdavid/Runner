@@ -69,10 +69,39 @@ export const LevelGenerator = {
 
     const endY = this.getTerrainY(chunkEnd);
 
+    // Add ceiling obstacles/crevasses
+    const overhangs = [];
+
+    // Rectangular ceiling cutout at X:2000 (60px wide, extends down 60px into channel)
+    const crevasse1StartX = 2000;
+    const crevasse1EndX = 2060;
+    if (startX <= crevasse1EndX && chunkEnd >= crevasse1StartX) {
+      overhangs.push({
+        startX: crevasse1StartX,
+        endX: crevasse1EndX,
+        clearance: 160, // Reduced from base 220 to create hanging obstacle
+      });
+    }
+
+    // Add ceiling recesses (inverse cutouts)
+    const recesses = [];
+
+    // Rectangular ceiling recess at X:2400 (60px wide, ceiling pulls back 60px)
+    const recess1StartX = 2400;
+    const recess1EndX = 2460;
+    if (startX <= recess1EndX && chunkEnd >= recess1StartX) {
+      recesses.push({
+        startX: recess1StartX,
+        endX: recess1EndX,
+        clearance: 280, // Increased from base 220 to create ceiling alcove
+      });
+    }
+
     return {
       regions,
-      overhangs: [],
+      overhangs,
       tunnels: [],
+      recesses,
       ceilingPoints: [],
       endPoint: { x: chunkEnd, y: endY },
       endX: chunkEnd,
