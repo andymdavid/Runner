@@ -14,84 +14,84 @@ const lerpPose = (pose1, pose2, t) => {
   return result;
 };
 
-// Running cycle - joints at midpoint, back leg longer with pronounced bend
+// Running cycle - back leg with LONGER upper thigh
 const runningPose1 = {
-  head: { x: 3, y: -55, radius: 15 },
-  torso: { x1: 2, y1: -40, x2: -1, y2: -25 },
-  // Shoulders at (2, -38) - arms are ~30 units total (15+15)
-  // Left arm points OUT to left, then bends down
-  leftArm: { x1: 2, y1: -38, x2: -11, y2: -30, x3: -11, y3: -15 },    // out left, elbow at midpoint, hand down
-  // Right arm forward
-  rightArm: { x1: 2, y1: -38, x2: 10, y2: -28, x3: 14, y3: -18 },     // forward, elbow midpoint
-  // Hips at (-1, -25) - legs are ~25 units total (12.5+12.5)
-  // Left leg (forward): knee at midpoint ~12-13 units down
-  leftLeg: { x1: -1, y1: -25, x2: 8, y2: -13, x3: 6, y3: 0 },         // knee midpoint forward, foot back to ground
-  // Right leg (back): LONGER with more pronounced upward bend
-  rightLeg: { x1: -1, y1: -25, x2: -7, y2: -13, x3: -11, y3: -6 }     // knee midpoint back, foot bent up high
+  head: { x: 3, y: -68, radius: 12 },
+  torso: { x1: 2, y1: -53, x2: -1, y2: -38 },
+  // Shoulders at (2, -51)
+  // Left arm: upper arm more level, then bends down
+  leftArm: { x1: 2, y1: -51, x2: -11, y2: -47, x3: -11, y3: -28 },    // upper arm more level, hand down
+  // Right arm forward: upper arm more level
+  rightArm: { x1: 2, y1: -51, x2: 10, y2: -46, x3: 14, y3: -31 },     // upper arm more level
+  // Hips at (-1, -38)
+  // Left leg (forward): knee forward, foot back to ground
+  leftLeg: { x1: -1, y1: -38, x2: 8, y2: -19, x3: 6, y3: 0 },         // knee midpoint forward, foot to ground
+  // Right leg (back): LONGER upper thigh extends further back and down
+  rightLeg: { x1: -1, y1: -38, x2: -14, y2: -18, x3: -22, y3: -28 }   // longer thigh to knee, lower leg angles UP
 };
 
 const runningPose2 = {
-  head: { x: 3, y: -55, radius: 15 },
-  torso: { x1: 2, y1: -40, x2: -1, y2: -25 },
-  // Shoulders at (2, -38)
-  // Right arm points OUT to left, then bends down
-  rightArm: { x1: 2, y1: -38, x2: -11, y2: -30, x3: -11, y3: -15 },   // out left, elbow midpoint, hand down
-  // Left arm forward
-  leftArm: { x1: 2, y1: -38, x2: 10, y2: -28, x3: 14, y3: -18 },      // forward, elbow midpoint
-  // Hips at (-1, -25)
-  // Right leg (forward): knee at midpoint
-  rightLeg: { x1: -1, y1: -25, x2: 8, y2: -13, x3: 6, y3: 0 },        // knee midpoint forward, foot back to ground
-  // Left leg (back): LONGER with more pronounced upward bend
-  leftLeg: { x1: -1, y1: -25, x2: -7, y2: -13, x3: -11, y3: -6 }      // knee midpoint back, foot bent up high
+  head: { x: 3, y: -68, radius: 12 },
+  torso: { x1: 2, y1: -53, x2: -1, y2: -38 },
+  // Shoulders at (2, -51)
+  // Right arm: upper arm more level, then bends down
+  rightArm: { x1: 2, y1: -51, x2: -11, y2: -47, x3: -11, y3: -28 },   // upper arm more level, hand down
+  // Left arm forward: upper arm more level
+  leftArm: { x1: 2, y1: -51, x2: 10, y2: -46, x3: 14, y3: -31 },      // upper arm more level
+  // Hips at (-1, -38)
+  // Right leg (forward): knee forward, foot back to ground
+  rightLeg: { x1: -1, y1: -38, x2: 8, y2: -19, x3: 6, y3: 0 },        // knee midpoint forward, foot to ground
+  // Left leg (back): LONGER upper thigh extends further back and down
+  leftLeg: { x1: -1, y1: -38, x2: -14, y2: -18, x3: -22, y3: -28 }    // longer thigh to knee, lower leg angles UP
 };
 
-// Sprinting - more forward lean, joints at midpoint, exaggerated motion
+// Sprinting - back leg with LONGER upper thigh, more exaggerated
 const sprintingPose1 = {
-  head: { x: 8, y: -55, radius: 15 },
-  torso: { x1: 5, y1: -40, x2: -3, y2: -25 },
-  // Shoulders at (5, -38)
-  // Left arm points OUT to left, then bends down
-  leftArm: { x1: 5, y1: -38, x2: -8, y2: -28, x3: -8, y3: -13 },      // out left, elbow midpoint, hand down
-  // Right arm forward (more extended)
-  rightArm: { x1: 5, y1: -38, x2: 15, y2: -26, x3: 22, y3: -16 },     // forward, elbow midpoint
-  // Hips at (-3, -25)
-  // Left leg (forward): knee at midpoint, bigger stride
-  leftLeg: { x1: -3, y1: -25, x2: 11, y2: -13, x3: 9, y3: 0 },        // knee midpoint forward, foot back
-  // Right leg (back): LONGER, more pronounced upward bend
-  rightLeg: { x1: -3, y1: -25, x2: -9, y2: -13, x3: -14, y3: -5 }     // knee midpoint back, foot bent up
+  head: { x: 8, y: -68, radius: 12 },
+  torso: { x1: 5, y1: -53, x2: -3, y2: -38 },
+  // Shoulders at (5, -51)
+  // Left arm: upper arm more level, then bends down
+  leftArm: { x1: 5, y1: -51, x2: -8, y2: -46, x3: -8, y3: -26 },      // upper arm more level, hand down
+  // Right arm forward: upper arm more level
+  rightArm: { x1: 5, y1: -51, x2: 15, y2: -45, x3: 22, y3: -29 },     // upper arm more level
+  // Hips at (-3, -38)
+  // Left leg (forward): bigger stride
+  leftLeg: { x1: -3, y1: -38, x2: 11, y2: -19, x3: 9, y3: 0 },        // knee forward, foot back
+  // Right leg (back): LONGER thigh, extends way back
+  rightLeg: { x1: -3, y1: -38, x2: -16, y2: -16, x3: -26, y3: -30 }   // longer thigh, lower leg angles UP high
 };
 
 const sprintingPose2 = {
-  head: { x: 8, y: -55, radius: 15 },
-  torso: { x1: 5, y1: -40, x2: -3, y2: -25 },
-  // Shoulders at (5, -38)
-  // Right arm points OUT to left, then bends down
-  rightArm: { x1: 5, y1: -38, x2: -8, y2: -28, x3: -8, y3: -13 },     // out left, elbow midpoint, hand down
-  // Left arm forward (more extended)
-  leftArm: { x1: 5, y1: -38, x2: 15, y2: -26, x3: 22, y3: -16 },      // forward, elbow midpoint
-  // Hips at (-3, -25)
-  // Right leg (forward): knee at midpoint, bigger stride
-  rightLeg: { x1: -3, y1: -25, x2: 11, y2: -13, x3: 9, y3: 0 },       // knee midpoint forward, foot back
-  // Left leg (back): LONGER, more pronounced upward bend
-  leftLeg: { x1: -3, y1: -25, x2: -9, y2: -13, x3: -14, y3: -5 }      // knee midpoint back, foot bent up
+  head: { x: 8, y: -68, radius: 12 },
+  torso: { x1: 5, y1: -53, x2: -3, y2: -38 },
+  // Shoulders at (5, -51)
+  // Right arm: upper arm more level, then bends down
+  rightArm: { x1: 5, y1: -51, x2: -8, y2: -46, x3: -8, y3: -26 },     // upper arm more level, hand down
+  // Left arm forward: upper arm more level
+  leftArm: { x1: 5, y1: -51, x2: 15, y2: -45, x3: 22, y3: -29 },      // upper arm more level
+  // Hips at (-3, -38)
+  // Right leg (forward): bigger stride
+  rightLeg: { x1: -3, y1: -38, x2: 11, y2: -19, x3: 9, y3: 0 },       // knee forward, foot back
+  // Left leg (back): LONGER thigh, extends way back
+  leftLeg: { x1: -3, y1: -38, x2: -16, y2: -16, x3: -26, y3: -30 }    // longer thigh, lower leg angles UP high
 };
 
 const crouchedPose = {
-  head: { x: -5, y: -40, radius: 15 },
-  torso: { x1: -5, y1: -25, x2: -12, y2: -12 },
+  head: { x: -5, y: -48, radius: 12 },
+  torso: { x1: -5, y1: -33, x2: -12, y2: -20 },
   // Arms bent with elbows at midpoint
-  leftArm: { x1: -5, y1: -23, x2: -16, y2: -15, x3: -22, y3: -8 },    // elbow midpoint
-  rightArm: { x1: -5, y1: -23, x2: -12, y2: -12, x3: -14, y3: -2 },   // elbow midpoint
+  leftArm: { x1: -5, y1: -31, x2: -16, y2: -23, x3: -22, y3: -16 },   // elbow midpoint
+  rightArm: { x1: -5, y1: -31, x2: -12, y2: -20, x3: -14, y3: -10 },  // elbow midpoint
   // Legs bent with knees at midpoint
-  leftLeg: { x1: -12, y1: -12, x2: -20, y2: -6, x3: -18, y3: 0 },     // knee midpoint
-  rightLeg: { x1: -12, y1: -12, x2: -8, y2: -6, x3: -3, y3: 0 }       // knee midpoint
+  leftLeg: { x1: -12, y1: -20, x2: -20, y2: -10, x3: -18, y3: 0 },    // knee midpoint
+  rightLeg: { x1: -12, y1: -20, x2: -8, y2: -10, x3: -3, y3: 0 }      // knee midpoint
 };
 
 const drawPose = (ctx, x, y, pose) => {
   ctx.save();
   ctx.strokeStyle = '#000000';
   ctx.fillStyle = '#000000';
-  ctx.lineWidth = 8;
+  ctx.lineWidth = 6;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
@@ -112,13 +112,13 @@ const drawPose = (ctx, x, y, pose) => {
 
   // Draw back limbs slightly darker for depth
   ctx.strokeStyle = '#111111';
-  ctx.lineWidth = 7;
+  ctx.lineWidth = 3;
   drawLimb(pose.rightArm);
   drawLimb(pose.rightLeg);
 
   // Draw front limbs
   ctx.strokeStyle = '#000000';
-  ctx.lineWidth = 8;
+  ctx.lineWidth = 4;
   drawLimb(pose.leftArm);
   drawLimb(pose.leftLeg);
 
