@@ -60,7 +60,16 @@ export const TerrainSystem = {
   },
 
   prune(beforeX) {
+    // Never prune the first chunk (0-1100) to keep start area and slope intact
+    const PROTECTED_START_ZONE = 1100;
+
+    // Only prune if we're beyond the protected zone
+    if (beforeX - 200 < PROTECTED_START_ZONE) {
+      return; // Don't prune at all if we'd touch protected terrain
+    }
+
     const cutoff = beforeX - 200;
+
     this.regions = this.regions
       .map((region) => {
         const { points } = region;
@@ -149,18 +158,31 @@ export const TerrainSystem = {
     const ctx = renderSystem.ctx;
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
+    const cameraX = renderSystem.cameraX;
 
-    const surfaceBase = Math.round(this.regions[0]?.points[0]?.y ?? GROUND_Y);
-    const channelTop = Math.round(Math.max(CEILING_TOP, surfaceBase - this.baseClearance + this.ceilingDrop));
-    const floorY = surfaceBase;
+    // Draw column by column for accurate rendering
+    const columnWidth = 2; // Draw in 2-pixel wide columns for performance
 
-    ctx.fillStyle = ceilingColor;
-    ctx.fillRect(0, 0, width, channelTop);
+    for (let screenX = 0; screenX < width; screenX += columnWidth) {
+      const worldX = screenX + cameraX;
+      const floorY = this.getSurfaceY(worldX);
+      const ceilingY = this.getCeilingY(worldX);
 
-    ctx.fillStyle = channelColor;
-    ctx.fillRect(0, channelTop, width, Math.max(floorY - channelTop, 0));
+      const actualFloorY = floorY !== Infinity ? floorY : GROUND_Y;
+      const actualCeilingY = Math.max(CEILING_TOP, ceilingY);
 
-    ctx.fillStyle = floorColor;
-    ctx.fillRect(0, floorY, width, height - floorY);
+      // Draw ceiling column (from top to ceiling line)
+      ctx.fillStyle = ceilingColor;
+      ctx.fillRect(screenX, 0, columnWidth, actualCeilingY);
+
+      // Draw channel column (from ceiling to floor)
+      ctx.fillStyle = channelColor;
+      const channelHeight = actualFloorY - actualCeilingY;
+      ctx.fillRect(screenX, actualCeilingY, columnWidth, channelHeight);
+
+      // Draw floor column (from floor to bottom)
+      ctx.fillStyle = floorColor;
+      ctx.fillRect(screenX, actualFloorY, columnWidth, height - actualFloorY);
+    }
   },
 };

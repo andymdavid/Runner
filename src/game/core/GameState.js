@@ -2,9 +2,15 @@ export const GameState = {
   lives: 3,
   distance: 0,
   isGameOver: false,
+  debugMode: false,
+
+  toggleDebugMode() {
+    this.debugMode = !this.debugMode;
+    console.log(`Debug mode: ${this.debugMode ? 'ON' : 'OFF'}`);
+  },
 
   loseLife() {
-    if (this.isGameOver) return;
+    if (this.isGameOver || this.debugMode) return;
 
     this.lives -= 1;
     if (this.lives <= 0) {

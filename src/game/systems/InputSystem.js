@@ -1,18 +1,26 @@
-const trackedKeys = ['ArrowLeft', 'ArrowRight'];
+const trackedKeys = ['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'KeyW', 'KeyS'];
 
 export const InputSystem = {
   keys: {},
   _handleKeyDown: null,
   _handleKeyUp: null,
+  _onDebugToggle: null,
 
-  init() {
+  init(onDebugToggle = null) {
     if (this._handleKeyDown || this._handleKeyUp) {
       return;
     }
 
+    this._onDebugToggle = onDebugToggle;
+
     this._handleKeyDown = (event) => {
       if (trackedKeys.includes(event.code)) {
         this.keys[event.code] = true;
+      }
+
+      // Toggle debug mode with 'D' key
+      if (event.code === 'KeyD' && event.shiftKey && this._onDebugToggle) {
+        this._onDebugToggle();
       }
     };
 
@@ -36,6 +44,17 @@ export const InputSystem = {
     }
 
     return 1.0;
+  },
+
+  getCameraPan() {
+    let panX = 0;
+    if (this.keys['KeyA']) {
+      panX -= 1;
+    }
+    if (this.keys['KeyD']) {
+      panX += 1;
+    }
+    return panX;
   },
 
   cleanup() {
