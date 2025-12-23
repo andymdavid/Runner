@@ -60,8 +60,8 @@ export const TerrainSystem = {
   },
 
   prune(beforeX) {
-    // Never prune the first chunk (0-1100) to keep start area and slope intact
-    const PROTECTED_START_ZONE = 1100;
+    // Protect first 4000 pixels (2 full pattern cycles) from pruning
+    const PROTECTED_START_ZONE = 4000;
 
     // Only prune if we're beyond the protected zone
     if (beforeX - 200 < PROTECTED_START_ZONE) {
