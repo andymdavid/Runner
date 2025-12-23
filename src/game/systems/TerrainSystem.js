@@ -128,6 +128,7 @@ export const TerrainSystem = {
 
   getClearance(x) {
     let clearance = this.baseClearance;
+
     for (const zone of this.overhangs) {
       if (x >= zone.startX && x <= zone.endX) {
         clearance = Math.min(clearance, zone.clearance);
@@ -148,8 +149,22 @@ export const TerrainSystem = {
         clearance = Math.max(clearance, point.offset);
       }
     }
-    clearance = Math.max(this.minClearance, clearance - this.ceilingDrop);
+
+    const maxDrop = this._getMaxCollapseDrop();
+    const actualDrop = Math.min(this.ceilingDrop, maxDrop);
+    clearance = Math.max(this.minClearance, clearance - actualDrop);
     return clearance;
+  },
+
+  _getMaxCollapseDrop() {
+    let minClearance = this.baseClearance;
+    for (const zone of this.overhangs) {
+      minClearance = Math.min(minClearance, zone.clearance);
+    }
+    for (const tunnel of this.tunnels) {
+      minClearance = Math.min(minClearance, tunnel.clearance);
+    }
+    return Math.max(this.minClearance, minClearance);
   },
 
   getCeilingY(x) {
