@@ -17,7 +17,7 @@ export const AnimationController = {
 
     if (clearance < 60) {
       this.currentState = 'crouched';
-    } else if (speed > 8) {
+    } else if (speed > 16) {
       this.currentState = 'sprinting';
     } else {
       this.currentState = 'running';

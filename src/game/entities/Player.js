@@ -2,7 +2,7 @@ export class Player {
   constructor() {
     this.position = { x: 100, y: 400 };
     this.velocity = { x: 0, y: 0 };
-    this.baseSpeed = 5;
+    this.baseSpeed = 10;
     this.width = 20;
     this.height = 40;
     this.previousPosition = { ...this.position };
