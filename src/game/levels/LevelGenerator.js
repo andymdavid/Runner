@@ -12,6 +12,132 @@ const TOTAL_RISE = SLOPE_LENGTH * SLOPE_RATE; // Total vertical rise during upwa
 // Pattern: horizontal(500) -> up(500) -> horizontal(500) -> down(500) = 2000px cycle
 const PATTERN_CYCLE_LENGTH = HORIZONTAL_LENGTH + SLOPE_LENGTH + HORIZONTAL_LENGTH + SLOPE_LENGTH; // 2000px
 
+// Designed ceiling/floor features
+const CEILING_OVERHANGS = [
+  // Chapter 1: Introductory staggered crevasses (700-1800)
+  { start: 780, width: 60, clearance: 160 },
+  { start: 860, width: 40, clearance: 150 },
+  { start: 1140, width: 70, clearance: 180 },
+  { start: 1240, width: 50, clearance: 160 },
+  { start: 1430, width: 60, clearance: 160 },
+  { start: 1560, width: 40, clearance: 150 },
+  { start: 1710, width: 60, clearance: 140 },
+
+  // Chapter 2: Mid-section gauntlets (1800-3200)
+  { start: 2000, width: 60, clearance: 140 },
+  { start: 2150, width: 80, clearance: 180 },
+  { start: 2320, width: 60, clearance: 150 },
+  { start: 2520, width: 70, clearance: 150 },
+  { start: 2660, width: 60, clearance: 160 },
+  { start: 2840, width: 70, clearance: 150 },
+  { start: 3000, width: 60, clearance: 160 },
+  { start: 3140, width: 60, clearance: 150 },
+
+  // Chapter 3: Late-section choke points (3200-5000)
+  { start: 3290, width: 80, clearance: 140 },
+  { start: 3460, width: 60, clearance: 150 },
+  { start: 3620, width: 60, clearance: 140 },
+  { start: 3780, width: 70, clearance: 150 },
+  { start: 3940, width: 60, clearance: 140 },
+  { start: 4100, width: 70, clearance: 150 },
+  { start: 4300, width: 70, clearance: 150 },
+  { start: 4460, width: 60, clearance: 140 },
+  { start: 4660, width: 80, clearance: 140 },
+  { start: 4820, width: 60, clearance: 150 },
+  { start: 4980, width: 70, clearance: 140 },
+  { start: 5160, width: 60, clearance: 150 },
+  { start: 5340, width: 70, clearance: 140 },
+  { start: 5520, width: 60, clearance: 150 },
+  { start: 5700, width: 70, clearance: 140 },
+  { start: 5880, width: 60, clearance: 150 },
+  { start: 6060, width: 70, clearance: 140 },
+  { start: 6240, width: 60, clearance: 150 },
+  { start: 6420, width: 70, clearance: 140 },
+  { start: 6600, width: 60, clearance: 150 },
+  { start: 6780, width: 80, clearance: 140 },
+  { start: 6960, width: 60, clearance: 150 },
+  { start: 7140, width: 70, clearance: 140 },
+  { start: 7320, width: 60, clearance: 150 },
+  { start: 7500, width: 70, clearance: 140 },
+  { start: 7680, width: 60, clearance: 150 },
+  { start: 7860, width: 70, clearance: 140 },
+  { start: 8040, width: 60, clearance: 150 },
+  { start: 8220, width: 70, clearance: 140 },
+  { start: 8400, width: 60, clearance: 150 },
+  { start: 8580, width: 70, clearance: 140 },
+  { start: 8760, width: 60, clearance: 150 },
+  { start: 8940, width: 70, clearance: 140 },
+  { start: 9120, width: 60, clearance: 150 },
+  { start: 9300, width: 70, clearance: 140 },
+  { start: 9480, width: 60, clearance: 150 },
+  { start: 9660, width: 70, clearance: 140 },
+];
+
+const CEILING_RECESSES = [
+  // Chapter 1 safety pockets
+  { start: 900, width: 80, clearance: 280 },
+  { start: 1330, width: 80, clearance: 260 },
+  { start: 1810, width: 80, clearance: 260 },
+
+  // Chapter 2 spaced alcoves
+  { start: 2400, width: 60, clearance: 300 },
+  { start: 2880, width: 80, clearance: 260 },
+  { start: 3380, width: 80, clearance: 300 },
+  { start: 3600, width: 80, clearance: 280 },
+  { start: 4020, width: 80, clearance: 280 },
+  { start: 4460, width: 90, clearance: 280 },
+  { start: 4900, width: 90, clearance: 270 },
+
+  // Chapter 3 sparse refuges
+  { start: 5340, width: 90, clearance: 300 },
+  { start: 6000, width: 80, clearance: 280 },
+  { start: 6660, width: 90, clearance: 260 },
+  { start: 7320, width: 80, clearance: 280 },
+  { start: 7980, width: 90, clearance: 300 },
+  { start: 8640, width: 80, clearance: 280 },
+  { start: 9300, width: 90, clearance: 260 },
+  { start: 9740, width: 90, clearance: 300 },
+];
+
+const FLOOR_RECESSES = [
+  // Chapter 1 crevasses
+  { start: 720, width: 140, offset: 20 },
+  { start: 1110, width: 130, offset: 25 },
+  { start: 1390, width: 100, offset: 25 },
+  { start: 1660, width: 110, offset: 25 },
+  { start: 1900, width: 80, offset: 25 },
+  { start: 2200, width: 110, offset: 25 },
+
+  // Chapter 2 support pits (fewer, longer gaps between them)
+  { start: 2680, width: 110, offset: 25 },
+  { start: 2940, width: 120, offset: 25 },
+  { start: 3220, width: 130, offset: 25 },
+  { start: 3500, width: 120, offset: 25 },
+  { start: 3760, width: 110, offset: 25 },
+  { start: 4020, width: 130, offset: 25 },
+
+  // Chapter 3 sparse crevasses
+  { start: 4580, width: 120, offset: 25 },
+  { start: 4860, width: 130, offset: 30 },
+  { start: 5140, width: 120, offset: 25 },
+  { start: 5420, width: 130, offset: 30 },
+  { start: 5700, width: 120, offset: 25 },
+  { start: 5980, width: 140, offset: 30 },
+  { start: 6260, width: 130, offset: 25 },
+  { start: 6540, width: 140, offset: 30 },
+  { start: 6820, width: 120, offset: 25 },
+  { start: 7100, width: 140, offset: 30 },
+  { start: 7380, width: 120, offset: 25 },
+  { start: 7660, width: 140, offset: 30 },
+  { start: 7940, width: 120, offset: 25 },
+  { start: 8220, width: 140, offset: 30 },
+  { start: 8500, width: 120, offset: 25 },
+  { start: 8780, width: 140, offset: 30 },
+  { start: 9060, width: 120, offset: 25 },
+  { start: 9340, width: 140, offset: 30 },
+  { start: 9620, width: 120, offset: 25 },
+];
+
 export const LevelGenerator = {
   chunkWidth: 1000,
   minY: 260,
@@ -71,43 +197,30 @@ export const LevelGenerator = {
 
     // Add ceiling obstacles/crevasses
     const overhangs = [];
-
-    // Rectangular ceiling cutout at X:2000 (60px wide, extends down 60px into channel)
-    const crevasse1StartX = 2000;
-    const crevasse1EndX = 2060;
-    if (startX <= crevasse1EndX && chunkEnd >= crevasse1StartX) {
-      overhangs.push({
-        startX: crevasse1StartX,
-        endX: crevasse1EndX,
-        clearance: 140, // 80px drop from base 220 clearance
-      });
-    }
+    CEILING_OVERHANGS.forEach(({ start, width, clearance }) => {
+      const end = start + width;
+      if (startX <= end && chunkEnd >= start) {
+        overhangs.push({ startX: start, endX: end, clearance });
+      }
+    });
 
     // Add ceiling recesses (inverse cutouts)
     const recesses = [];
     const floorOffsets = [];
 
-    // Rectangular ceiling recess at X:2400 (60px wide, ceiling pulls back 60px)
-    const recess1StartX = 2400;
-    const recess1EndX = 2460;
-    if (startX <= recess1EndX && chunkEnd >= recess1StartX) {
-      recesses.push({
-        startX: recess1StartX,
-        endX: recess1EndX,
-        clearance: 300, // 80px taller than base 220 clearance
-      });
-    }
+    CEILING_RECESSES.forEach(({ start, width, clearance }) => {
+      const end = start + width;
+      if (startX <= end && chunkEnd >= start) {
+        recesses.push({ startX: start, endX: end, clearance });
+      }
+    });
 
-    // Floor recess matching the ceiling-recess style (but cutting downward)
-    const floorRecessStartX = 2200;
-    const floorRecessEndX = floorRecessStartX + 60;
-    if (startX <= floorRecessEndX && chunkEnd >= floorRecessStartX) {
-      floorOffsets.push({
-        startX: floorRecessStartX,
-        endX: floorRecessEndX,
-        offset: 25, // Drop floor by 25px within this span
-      });
-    }
+    FLOOR_RECESSES.forEach(({ start, width, offset }) => {
+      const end = start + width;
+      if (startX <= end && chunkEnd >= start) {
+        floorOffsets.push({ startX: start, endX: end, offset });
+      }
+    });
 
     return {
       regions,

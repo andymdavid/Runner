@@ -41,6 +41,8 @@ export class GameLoop {
     this.showCrushMessage = false;
     this.crushMessageTimer = 0;
     this.isPausedByCeiling = false;
+    this.waitingForCeilingReset = false;
+    this.safeClearanceBuffer = 8;
 
     this.debugCameraX = 0;
     this.debugCameraPanSpeed = 10;
@@ -112,7 +114,21 @@ export class GameLoop {
       }
     } else {
       // Normal gameplay mode
-      const wasCeilingPaused = this.isPausedByCeiling;
+      CeilingSystem.update(this.ceiling, deltaTime, TerrainSystem);
+
+      const clearance = CollisionSystem.getVerticalClearance(this.player);
+      const clearanceThreshold = this.player.height + this.safeClearanceBuffer;
+
+      if (CeilingSystem.isCeilingLow() && clearance > clearanceThreshold) {
+        this.waitingForCeilingReset = true;
+      } else if (CeilingSystem.isCeilingSafe() && clearance > clearanceThreshold) {
+        this.waitingForCeilingReset = false;
+      }
+
+      const isCeilingPaused = this.waitingForCeilingReset;
+      this.isPausedByCeiling = isCeilingPaused;
+
+      const wasCeilingPaused = isCeilingPaused;
       const speedModifier = InputSystem.getSpeedModifier();
       const intendedSpeed = this.player.baseSpeed * speedModifier;
       this.player.velocity.x = wasCeilingPaused ? 0 : intendedSpeed;
@@ -139,7 +155,12 @@ export class GameLoop {
         GameState.updateDistance(this.player.position.x);
       }
 
-      CeilingSystem.update(this.ceiling, deltaTime, TerrainSystem);
+      if (!GameState.isFinished && this.player.position.x >= MAP_LENGTH - 30) {
+        GameState.completeLevel();
+        this.player.velocity.x = 0;
+        this.player.velocity.y = 0;
+        return;
+      }
 
       if (!wasCeilingPaused) {
         if (this.player.position.x + CANVAS_WIDTH > this.nextChunkX) {
@@ -159,11 +180,9 @@ export class GameLoop {
         this.snapPlayerToTerrain();
         this.showCrushMessage = true;
         this.crushMessageTimer = 1000;
-        this.isPausedByCeiling = false;
+        this.isPausedByCeiling = true;
+        this.waitingForCeilingReset = true;
       } else {
-        const clearance = CollisionSystem.getVerticalClearance(this.player);
-        const ceilingLow = CeilingSystem.isCeilingLow();
-        this.isPausedByCeiling = ceilingLow && clearance > this.player.height;
       }
 
       if (this.showCrushMessage) {
@@ -207,7 +226,11 @@ export class GameLoop {
       this.drawDebugOverlay();
     }
 
-    if (GameState.isGameOver) {
+    if (GameState.isFinished) {
+      RenderSystem.ctx.fillStyle = '#00FF00';
+      RenderSystem.ctx.font = '48px Arial';
+      RenderSystem.ctx.fillText('LEVEL COMPLETE', CANVAS_WIDTH / 2 - 200, CANVAS_HEIGHT / 2);
+    } else if (GameState.isGameOver) {
       RenderSystem.ctx.fillStyle = 'red';
       RenderSystem.ctx.font = '48px Arial';
       RenderSystem.ctx.fillText('GAME OVER', CANVAS_WIDTH / 2 - 120, CANVAS_HEIGHT / 2);

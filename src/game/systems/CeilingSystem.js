@@ -13,7 +13,7 @@ export const CeilingSystem = {
   SAFE_DURATION: 5000,
   WARNING_DURATION: 1000,
   DESCEND_DURATION: 250,
-  ASCEND_DURATION: 1000,
+  ASCEND_DURATION: 700,
   HOLD_DURATION: 3000,
   DESCEND_DISTANCE: 220,
   currentDrop: 0,
@@ -88,4 +88,9 @@ export const CeilingSystem = {
   isCeilingLow() {
     return this.currentPhase === PHASE.DESCENDING || this.currentPhase === PHASE.HOLD;
   },
+
+  isCeilingSafe() {
+    return this.currentPhase === PHASE.SAFE;
+  },
+
 };
