@@ -36,11 +36,11 @@ export const InputSystem = {
 
   getSpeedModifier() {
     if (this.keys['ArrowLeft']) {
-      return 0.5;
+      return 0.67;
     }
 
     if (this.keys['ArrowRight']) {
-      return 1.8;
+      return 1.65;
     }
 
     return 1.0;
