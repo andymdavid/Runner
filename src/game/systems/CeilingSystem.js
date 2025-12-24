@@ -11,12 +11,13 @@ export const CeilingSystem = {
   currentPhase: PHASE.SAFE,
   phaseTimer: 0,
   SAFE_DURATION: 5000,
-  WARNING_DURATION: 1000,
+  WARNING_DURATION: 2000,
   DESCEND_DURATION: 250,
   ASCEND_DURATION: 700,
   HOLD_DURATION: 3000,
   DESCEND_DISTANCE: 220,
   currentDrop: 0,
+  shakeAmplitude: 6,
 
   update(ceiling, deltaTime, terrainSystem) {
     this.phaseTimer += deltaTime;
@@ -25,6 +26,7 @@ export const CeilingSystem = {
       case PHASE.SAFE:
         ceiling.currentColor = ceiling.baseColor;
         this.currentDrop = 0;
+        if (terrainSystem) terrainSystem.setCeilingShake(0);
         if (this.phaseTimer >= this.SAFE_DURATION) {
           this._setPhase(PHASE.WARNING);
         }
@@ -34,6 +36,7 @@ export const CeilingSystem = {
         ceiling.currentColor = (Math.floor(this.phaseTimer / 200) % 2 === 0)
           ? ceiling.warningColor
           : ceiling.baseColor;
+        if (terrainSystem) terrainSystem.setCeilingShake(this.shakeAmplitude);
 
         if (this.phaseTimer >= this.WARNING_DURATION) {
           this._setPhase(PHASE.DESCENDING);
@@ -44,6 +47,7 @@ export const CeilingSystem = {
         const progress = Math.min(this.phaseTimer / this.DESCEND_DURATION, 1);
         this.currentDrop = progress * this.DESCEND_DISTANCE;
         ceiling.currentColor = ceiling.baseColor;
+        if (terrainSystem) terrainSystem.setCeilingShake(0);
 
         if (this.phaseTimer >= this.DESCEND_DURATION) {
           this._setPhase(PHASE.HOLD);
@@ -53,6 +57,7 @@ export const CeilingSystem = {
 
       case PHASE.HOLD: {
         this.currentDrop = this.DESCEND_DISTANCE;
+        if (terrainSystem) terrainSystem.setCeilingShake(0);
         if (this.phaseTimer >= this.HOLD_DURATION) {
           this._setPhase(PHASE.ASCENDING);
         }
@@ -62,6 +67,7 @@ export const CeilingSystem = {
       case PHASE.ASCENDING: {
         const progress = Math.min(this.phaseTimer / this.ASCEND_DURATION, 1);
         this.currentDrop = (1 - progress) * this.DESCEND_DISTANCE;
+        if (terrainSystem) terrainSystem.setCeilingShake(0);
 
         if (this.phaseTimer >= this.ASCEND_DURATION) {
           this.currentDrop = 0;
@@ -75,7 +81,7 @@ export const CeilingSystem = {
         break;
     }
 
-    if (terrainSystem) {
+        if (terrainSystem) {
       terrainSystem.setCeilingDrop(this.currentDrop);
     }
   },

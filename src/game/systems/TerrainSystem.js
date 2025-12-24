@@ -14,6 +14,8 @@ export const TerrainSystem = {
   baseClearance: 220,
   minClearance: 0,
   ceilingDrop: 0,
+  ceilingShakeAmplitude: 0,
+  ceilingShakeTime: 0,
 
   init(startY = GROUND_Y) {
     this.regions = [{ points: [{ x: 0, y: startY }] }];
@@ -23,6 +25,8 @@ export const TerrainSystem = {
     this.recesses = [];
     this.floorOffsets = [];
     this.ceilingDrop = 0;
+    this.ceilingShakeAmplitude = 0;
+    this.ceilingShakeTime = 0;
   },
 
   addChunk(chunk) {
@@ -204,6 +208,10 @@ export const TerrainSystem = {
     this.ceilingDrop = Math.max(0, amount);
   },
 
+  setCeilingShake(amplitude = 0) {
+    this.ceilingShakeAmplitude = Math.max(0, amplitude);
+  },
+
   draw(renderSystem, ceilingColor = '#000000', floorColor = '#000000', channelColor = '#cfcfcf') {
     const ctx = renderSystem.ctx;
     const width = ctx.canvas.width;
@@ -213,13 +221,27 @@ export const TerrainSystem = {
     // Draw column by column for accurate rendering
     const columnWidth = 2; // Draw in 2-pixel wide columns for performance
 
+    if (this.ceilingShakeAmplitude > 0) {
+      this.ceilingShakeTime += 0.2;
+    } else {
+      this.ceilingShakeTime = 0;
+    }
+
     for (let screenX = 0; screenX < width; screenX += columnWidth) {
       const worldX = screenX + cameraX;
       const floorY = this.getSurfaceY(worldX);
       const ceilingY = this.getCeilingY(worldX);
 
       const actualFloorY = floorY !== Infinity ? floorY : GROUND_Y;
-      const actualCeilingY = Math.max(CEILING_TOP, ceilingY);
+      let actualCeilingY = Math.max(CEILING_TOP, ceilingY);
+
+      if (this.ceilingShakeAmplitude > 0) {
+        const phase = Math.floor(this.ceilingShakeTime * 8);
+        const blockIndex = Math.floor(worldX / 40);
+        const direction = (phase + blockIndex) % 2 === 0 ? 1 : -1;
+        const jitter = direction * this.ceilingShakeAmplitude;
+        actualCeilingY = Math.max(CEILING_TOP, actualCeilingY + jitter);
+      }
 
       // Draw ceiling column (from top to ceiling line)
       ctx.fillStyle = ceilingColor;
